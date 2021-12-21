@@ -1,43 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nberen <nberen@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/21 13:23:29 by nberen            #+#    #+#             */
+/*   Updated: 2021/12/21 14:50:01 by nberen           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	if (!s)
-		return (0);
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	size_t	i;
-	size_t	j;
-	char	*str;
-
-	if (!s2)
-		return (NULL);
-	if (!s1)
-	{
-		s1 = (char *)malloc(1);
-		s1[0] = '\0';
-	}
-	str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!str)
-		return (NULL);
-	i = -1;
-	j = 0;
-	while (s1[++i])
-		str[i] = s1[i];
-	while (s2[j])
-		str[i++] = s2[j++];
-	str[i] = '\0';
-	free(s1);
-	return (str);
-}
 
 int	ft_check_endl(char *s)
 {
@@ -110,28 +83,28 @@ char	*ft_new_static_str(char *s)
 	return (str);
 }
 
-char	*ft_read_static_str(int fd, char *sstr)
+char	*ft_read_static_str(int fd, char *str)
 {
 	char	*buff;
-	int		read_check;
+	int		flag;
 
 	buff = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buff)
 		return (NULL);
-	read_check = -1;
-	while (!ft_check_endl(sstr) && read_check)
+	flag = -1;
+	while (!ft_check_endl(str) && flag)
 	{
-		read_check = read(fd, buff, BUFFER_SIZE);
-		if (read_check == -1)
+		flag = read(fd, buff, BUFFER_SIZE);
+		if (flag == -1)
 		{
 			free (buff);
 			return (NULL);
 		}
-		buff[read_check] = '\0';
-		sstr = ft_strjoin(sstr, buff);
+		buff[flag] = '\0';
+		str = ft_strjoin(str, buff);
 	}
 	free(buff);
-	return (sstr);
+	return (str);
 }
 
 char	*get_next_line(int fd)
@@ -159,11 +132,6 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-# include <unistd.h>
-# include <stdlib.h>
-# include <stddef.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
 int main()
@@ -173,7 +141,7 @@ int main()
 
 	i = 1;
 	fd = open("text.txt", O_RDONLY);
-	while(i != 11)
+	while(i <= 11)
 	{
 		printf("%d. ", i);
 		i++;
