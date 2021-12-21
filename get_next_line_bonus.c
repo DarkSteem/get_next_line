@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nberen <nberen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/21 13:23:29 by nberen            #+#    #+#             */
-/*   Updated: 2021/12/21 17:31:25 by nberen           ###   ########.fr       */
+/*   Created: 2021/12/21 16:39:19 by nberen            #+#    #+#             */
+/*   Updated: 2021/12/21 17:30:31 by nberen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	ft_check_endl(char *s)
 {
@@ -91,7 +91,7 @@ char	*ft_read_static_str(int fd, char *str)
 	buff = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buff)
 		return (NULL);
-	flag = -1;
+	flag = 1;
 	while (!ft_check_endl(str) && flag)
 	{
 		flag = read(fd, buff, BUFFER_SIZE);
@@ -109,42 +109,25 @@ char	*ft_read_static_str(int fd, char *str)
 
 char	*get_next_line(int fd)
 {
-	static char	*str;
+	static char	*str[FD_MAX_COUNT] = {0};
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	str = ft_read_static_str(fd, str);
-	if (!str)
+	str[fd] = ft_read_static_str(fd, str[fd]);
+	if (!str[fd])
 		return (NULL);
-	line = ft_get_line(str);
+	line = ft_get_line(str[fd]);
 	if (!ft_strlen(line))
 	{
 		free(line);
-		if (str)
+		if (str[fd])
 		{
-			free(str);
-			str = NULL;
+			free(str[fd]);
+			str[fd] = NULL;
 		}
 		return (NULL);
 	}
-	str = ft_new_static_str(str);
+	str[fd] = ft_new_static_str(str[fd]);
 	return (line);
 }
-
-// #include <fcntl.h>
-// #include <stdio.h>
-// int main()
-// {
-// 	int fd;
-// 	int i;
-
-// 	i = 1;
-// 	fd = open("text.txt", O_RDONLY);
-// 	while(i <= 11)
-// 	{
-// 		printf("%d. ", i);
-// 		i++;
-// 		printf("%s", get_next_line(fd));
-// 	}
-// }
